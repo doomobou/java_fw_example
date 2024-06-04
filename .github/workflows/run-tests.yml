@@ -5,15 +5,14 @@ on:
     inputs:
       tags:
         description: 'Test scenario tags'
-        required: true
-        type: choice
+        required: false
+        type: string
         options:
           - UI
           - API
-          - ALL
       headless:
         description: 'Headless mode'
-        required: true
+        required: false
         type: boolean
         default: true
 
@@ -26,7 +25,6 @@ jobs:
       - name: Clone repository
         uses: actions/checkout@v4.1.1
 
-
       - name: Set up Java 21
         uses: actions/setup-java@v4.2.1
         with:
@@ -34,5 +32,36 @@ jobs:
           cache: 'maven'
           distribution: 'zulu'
 
-      - name: Set up chromedriver
-        uses: nanasess/setup-chromedriver@v2
+      - name: Run test app
+        id: runApp
+        run: docker-compose up -d
+
+      - name: Run Tests
+        id: test
+        run: |
+          sleep 5
+          mvn clean verify -Dgroups="${{inputs.tags}}" -D"selenide.headless=${{inputs.headless}}"
+        continue-on-error: true
+
+      - name: Setup Allure History
+        uses: actions/checkout@v4.1.1
+        if: steps.test.outcome == 'success' || 'failure'
+        continue-on-error: true
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Generate Allure Report
+        uses: simple-elf/allure-report-action@v1.9
+        if: steps.test.outcome == 'success' || 'failure'
+        with:
+          allure_results: target/allure-results
+          allure_history: allure-history
+
+      - name: Publish Allure Report
+        if: steps.test.outcome == 'success' || 'failure'
+        uses: peaceiris/actions-gh-pages@v3.9.3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: allure-history

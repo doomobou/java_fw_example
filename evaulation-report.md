@@ -114,5 +114,6 @@ Consequently, the data types for Pet/Type/Visit fields are also the most basic f
 - Update Owner object handling to include Pet data in equality comparisons and other scenarios.
 - Proper logging setup, for example with log4j. Rules for intended log levels (e.g. UI = info, API = debug), proper reporting integration of logs with Allure,
   attaching screenshots for failed scenarios, etc.
+- Generally more detailed and informative logging - hooks for starting/finishing a scenario, test results.
 - Ability to run tests in different environments, correspondingly varying configuration and test data. 
 - Proper approach to Git flow - currently everything is in a single commit and in develop branch, in the future at least a basic trunk-based flow could be used, with develop branch being locked from direct pushing.
