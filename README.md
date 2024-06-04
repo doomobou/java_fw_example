@@ -1,21 +1,35 @@
-# Backbase QA Assignment
+# Documents
+- `README.md` - current document
+- `Test Cases.xlsx` - list of UI and API test cases
+- `evaluation-report.md` - Overall Evaluation Report for the application
 
-We are glad you accept this task! 
+## Requirements
+- Java 21
+- Maven
+- Chrome (with chromedriver of matching version)
+- Docker (to actually run the app under test)
 
-Please find the following instructions:
+### Additional requirements to generate and view test result report:
+- npm
+- Allure Commandline npm package (https://www.npmjs.com/package/allure-commandline)
 
-| File location                          | Description                                                                        |
-|----------------------------------------|------------------------------------------------------------------------------------|
-| `instructions/general-instructions.md` | contains the general information about this assignment                             | 
-| `instructions/specs/api-specs.md`      | contains the description of the endpoints, requests and responses for the API part |
-| `instructions/specs/api-specs.md`      | contains the description about the pages for the Web part                          | 
+## Run the tests
+With app already running (see original `instructions/general-instructions.md`):
 
-If you want, you can:
+`mvn clean verify -D"webdriver.chrome.driver=%path_to_chromedriver%", -Dgroups="tags_to_run" -D"selenide.headless=true"`, where:  
+`path_to_chromedriver` - full filepath to chromedriver of corresponding version to Chrome.  
+`tags_to_run`: possible options - `API`, `UI`. Remove `-Dgroups` option from command to run everything.  
+`selenide.headless` - `true` for headless, anything else or remove option for non-headless.
 
-* remove the entire content in this `README` file to add any relevant information
-* remove the instructions folder.
+## Generate and view result report
 
-## How to deliver the technical assignment
+In project `target` folder, after a finished test run:
 
-Please, use this repository to develop your technical assignment. You can remove or move all the content.
-As soon as you finish, contact the tech recruiter giving the feedback you finish it.
+`allure generate`
+->
+`allure open`
+
+## Expected results
+
+4 tests should fail (counting instances of parameterized tests as separate tests).  
+More details and reasoning in code comments and in the evaluation report.
